@@ -45,7 +45,7 @@ abstract class ExternalSearchXMLPlugin
             $file_in = curl_exec( $ch );
             curl_close( $ch );
             
-            echo "Failed to read XML file from ".$fault_url ;
+            throw new Exception( "Failed to read XML file from " . $fault_url );
         }
         else
         {
@@ -54,13 +54,13 @@ abstract class ExternalSearchXMLPlugin
             
             if ( $xml === false )
             {
-                throw new Exception( "Failed to read XML file from".$fault_url );
+                throw new Exception( "Failed to read XML file from " . $fault_url );
             }
             return $this->structureXML( $xml );
         }
     }
     
-    public function delete(  )
+    public function delete()
     {
         $handler = new xrowSOLRHandler();
         $manager = new ezcSearchEmbeddedManager();

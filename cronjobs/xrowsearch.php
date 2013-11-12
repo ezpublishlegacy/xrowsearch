@@ -20,6 +20,7 @@ foreach ( $plugins as $plug )
     catch ( Exception $e )
     {
         $cli->output( $e->getMessage() . "\n" );
+        continue;
     }
     // setup
     $handler = new xrowSOLRHandler();
