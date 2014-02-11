@@ -8,7 +8,6 @@
     {foreach ezini('AutocompleteSettings', 'OnFocusNodes', 'xrowsearch.ini') as $onFocusItem}
         {def $title = ezini(concat('OnFocusNode_', $onFocusItem), 'Title', 'xrowsearch.ini')
              $fnode_id = ezini(concat('OnFocusNode_', $onFocusItem), 'NodeID', 'xrowsearch.ini')
-             $link_to_main = cond(ezini(concat('OnFocusNode_', $onFocusItem), 'LinkToMainNode', 'xrowsearch.ini')|eq('true'), true(), false())
              $ignore_visibility = cond(ezini(concat('OnFocusNode_', $onFocusItem), 'ShowHiddenNodes', 'xrowsearch.ini')|eq('true'), true(), false())
              $sourceNode = fetch('content', 'node', hash('node_id', $fnode_id))
              $children = fetch('content', 'list', hash('parent_node_id', $fnode_id,
@@ -17,9 +16,9 @@
                                                        'class_filter_array', $classArray,
                                                        'ignore_visibility', $ignore_visibility,
                                                        'sort_by', $sourceNode.sort_array))
-             $fvalide_node = hash('title', $title, 'link_to_main', $link_to_main, 'children', $children)}
+             $fvalide_node = hash('title', $sourceNode.name|wash(), 'children', $children)}
          {set $fvalide_nodes = $fvalide_nodes|append($fvalide_node)}
-         {undef $title $fnode_id $link_to_main $ignore_visibility $sourceNode $children $fvalide_node}
+         {undef $fnode_id $ignore_visibility $sourceNode $children $fvalide_node}
     {/foreach}
 
     {if $fvalide_nodes|count|gt(0)}
@@ -27,10 +26,10 @@
     {foreach $fvalide_nodes as $valide_node_item}
         {set $height = $height|sum( $oneLI )}
         <ul class="header-search-ul">
-            <li class="header-search-li-headline">{$valide_node_item.title|i18n('extension/hannover')}</li>
+            <li class="header-search-li-headline">{$valide_node_item.title}</li>
             {foreach $valide_node_item.children as $childrenNode}
             {set $height = $height|sum( $oneLI )}
-            <li class="header-search-li-item"><a href={cond($valide_node_item.link_to_main, $childrenNode.object.main_node|ezurlclean, $childrenNode|ezurlclean)}>{$childrenNode.name|wash()}</a></li>
+            <li class="header-search-li-item"><a href={cond($childrenNode.is_main|not(), $childrenNode.object.main_node|ezurlclean, $childrenNode|ezurlclean)}>{$childrenNode.name|wash()}</a></li>
             {/foreach}
         </ul>
     {/foreach}
