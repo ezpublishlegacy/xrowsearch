@@ -92,7 +92,8 @@ jQuery(function() {
                     source: data.content,
                     appendTo: '#'+divautocompleteRS,
                     select: function( event, ui ) {
-                        window.console.log('drin');
+                        var searchURL = '{/literal}{"content/search"|ezurl("no", "full")}{literal}';
+                        window.location.href = searchURL+'?SearchText='+encodeURIComponent(ui.item.value);
                     }
                 });
             });
