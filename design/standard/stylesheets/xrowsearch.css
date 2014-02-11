@@ -1,0 +1,73 @@
+.ui-helper-hidden-accessible {
+    display: none;
+}
+#header-searchtext {
+    padding: 5px;
+    width: 310px;
+    height: 30px;
+    color: #000;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#header-autocomplete-rs, #header-autocomplete {
+    position: absolute;
+    text-align: left;
+    top: 50px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 480px;
+    z-index: 9050;
+    border: none;
+    padding: 0px;
+}
+#header-autocomplete ul.header-search-ul, #header-autocomplete-rs ul.ui-autocomplete {
+    margin: 0px;
+}
+#header-autocomplete-rs ul.ui-autocomplete {
+    /*top: 0px!important;
+    width: 480px!important;*/
+}
+#header-autocomplete ul li.header-search-li-headline, #header-autocomplete ul li.header-search-li-item, #header-autocomplete-rs ul.ui-autocomplete li {
+    color: #79B5D9;
+    font-weight: bold;
+    height: 20px;
+    width: auto;
+    padding: 10px;
+    margin: 0px;
+    border-bottom: 1px solid #ffffff;
+}
+#header-autocomplete ul li.header-search-li-headline:before, #header-autocomplete ul li.header-search-li-item:before, #header-autocomplete-rs ul.ui-autocomplete li:before {
+    content: '';
+}
+#header-autocomplete ul li.header-search-li-headline:hover, #header-autocomplete ul li.header-search-li-item:hover, #header-autocomplete-rs ul.ui-autocomplete li:hover {
+    background: #79B5D9;
+    color: #ffffff;
+}
+#header-autocomplete ul li.header-search-li-headline a, #header-autocomplete ul li.header-search-li-item a, #header-autocomplete-rs ul.ui-autocomplete li a {
+    color: #ffffff;
+    text-decoration: none;
+}
+#header-autocomplete ul li.header-search-li-headline {
+    font-size: 18px;
+}
+
+#header-autocomplete ul li.header-search-li-item {
+    font-size: 14px;
+    padding-left: 30px;
+}
+#header-autocomplete-rs ul.ui-autocomplete li {
+    font-size: 14px;
+}
+
+#overlay-blocker {
+    background: none repeat scroll 0 0 #000000;
+    display: none;
+    height: 100%;
+    left: 0;
+    opacity: 0.6;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 990;
+}
