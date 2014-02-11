@@ -6,8 +6,7 @@
 
 {if ezini_hasvariable('AutocompleteSettings', 'OnFocusNodes', 'xrowsearch.ini')}
     {foreach ezini('AutocompleteSettings', 'OnFocusNodes', 'xrowsearch.ini') as $onFocusItem}
-        {def $title = ezini(concat('OnFocusNode_', $onFocusItem), 'Title', 'xrowsearch.ini')
-             $fnode_id = ezini(concat('OnFocusNode_', $onFocusItem), 'NodeID', 'xrowsearch.ini')
+        {def $fnode_id = ezini(concat('OnFocusNode_', $onFocusItem), 'NodeID', 'xrowsearch.ini')
              $ignore_visibility = cond(ezini(concat('OnFocusNode_', $onFocusItem), 'ShowHiddenNodes', 'xrowsearch.ini')|eq('true'), true(), false())
              $sourceNode = fetch('content', 'node', hash('node_id', $fnode_id))
              $children = fetch('content', 'list', hash('parent_node_id', $fnode_id,
@@ -43,7 +42,7 @@
         <input id="header-searchtext" name="SearchText" type="text" value="" size="12" disabled="disabled" />
         <button id="header-searchbutton" type="submit" class="button-lupe-wifoe" disabled="disabled"><span class="search-lupe"></span></button>
         {else}
-        <div id="ezautocomplete">
+        <div id="header-ezautocomplete">
             <input id="header-searchtext" name="SearchText" type="text" value="" size="12" autocomplete="off" />
             <button id="header-searchbutton" type="submit" class="button-lupe-wifoe"><span class="search-lupe"></span></button>
             <div id="header-autocomplete"></div>
@@ -68,6 +67,7 @@ var element = jQuery('#header-searchtext'),
     divautocompleteRS = divautocomplete+'-rs',
     overlayblocker = 'overlay-blocker',
     minLength = {/literal}{ezini( 'AutoCompleteSettings', 'MinQueryLength', 'ezfind.ini' )}{literal},
+    loadDefaultContentCounter = 0,
     height = {/literal}{$height}{literal};
 
 jQuery(function() {
@@ -76,7 +76,7 @@ jQuery(function() {
             jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
         });
         var countChars = element.val().length;
-        if(countChars == 0 && jQuery('#'+divautocomplete).height() == 0)
+        if(countChars == loadDefaultContentCounter && jQuery('#'+divautocomplete).height() == 0)
             jQuery.loadAutocomplete(element, divautocomplete, height);
     });
     element.keyup(function() {
@@ -84,21 +84,32 @@ jQuery(function() {
             jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
         });
         var countChars = $(this).val().length;
-        if(countChars >= minLength) {
+        if(countChars > loadDefaultContentCounter) {
             jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
-            jQuery.ez('xrowsearch::autocomplete', {'term':element.val()} , function(data) {
-                window.console.log(data);
-                element.autocomplete({
-                    source: data.content,
-                    appendTo: '#'+divautocompleteRS,
-                    select: function( event, ui ) {
-                        var searchURL = '{/literal}{"content/search"|ezurl("no", "full")}{literal}';
-                        window.location.href = searchURL+'?SearchText='+encodeURIComponent(ui.item.value);
-                    }
-                });
+        }
+        if(countChars > loadDefaultContentCounter) {
+            element.autocomplete({
+                source: function(request , response){
+                    jQuery.ez('xrowsearch::autocomplete', {'term':request.term}, 
+                        function(data) {
+                            response(jQuery.map(data.content, function(item) {
+                                return {
+                                    label: item,
+                                    value: item
+                                }
+                            }));
+                        }
+                    );
+                },
+                minLength: minLength,
+                appendTo: '#'+divautocompleteRS,
+                select: function(event, ui) {
+                    var searchURL = '{/literal}{"content/search"|ezurl("no", "full")}{literal}';
+                    window.location.href = searchURL+'?SearchText='+encodeURIComponent(ui.item.value);
+                }
             });
         }
-        else if(countChars == 0 && jQuery('#'+divautocomplete).height() == 0) {
+        else if(countChars == loadDefaultContentCounter && jQuery('#'+divautocomplete).height() == 0) {
             jQuery.loadAutocomplete(element, divautocomplete, height);
         }
     });

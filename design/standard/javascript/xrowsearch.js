@@ -1,8 +1,10 @@
 jQuery.extend({
     initOverlayBlocker : function(divID, callbackFunc){
-        jQuery('body').append(jQuery('<div/>', {
-            id: divID
-        }));
+        if(jQuery('#'+divID).length == 0) {
+            jQuery('body').append(jQuery('<div/>', {
+                id: divID
+            }));
+        }
         jQuery('#'+divID).css('display', 'block').click(function() {
             jQuery(this).css('display', 'none');
             if(typeof callbackFunc == 'function'){
