@@ -8,16 +8,22 @@
     {foreach ezini('AutocompleteSettings', 'OnFocusNodes', 'xrowsearch.ini') as $onFocusItem}
         {def $fnode_id = ezini(concat('OnFocusNode_', $onFocusItem), 'NodeID', 'xrowsearch.ini')
              $ignore_visibility = cond(ezini(concat('OnFocusNode_', $onFocusItem), 'ShowHiddenNodes', 'xrowsearch.ini')|eq('true'), true(), false())
-             $sourceNode = fetch('content', 'node', hash('node_id', $fnode_id))
-             $children = fetch('content', 'list', hash('parent_node_id', $fnode_id,
-                                                       'limit', $limit,
-                                                       'class_filter_type', 'include',
-                                                       'class_filter_array', $classArray,
-                                                       'ignore_visibility', $ignore_visibility,
-                                                       'sort_by', $sourceNode.sort_array))
-             $fvalide_node = hash('title', $sourceNode.name|wash(), 'children', $children)}
-         {set $fvalide_nodes = $fvalide_nodes|append($fvalide_node)}
-         {undef $fnode_id $ignore_visibility $sourceNode $children $fvalide_node}
+             $sourceNode = fetch('content', 'node', hash('node_id', $fnode_id))}
+        {if $sourceNode}
+            {def $children = fetch('content', 'list', hash('parent_node_id', $fnode_id,
+                                                           'limit', $limit,
+                                                           'class_filter_type', 'include',
+                                                           'class_filter_array', $classArray,
+                                                           'ignore_visibility', $ignore_visibility,
+                                                           'sort_by', $sourceNode.sort_array))}
+            {if $children|count|gt(0)}
+                {def $fvalide_node = hash('title', $sourceNode.name|wash(), 'children', $children)}
+                {set $fvalide_nodes = $fvalide_nodes|append($fvalide_node)}
+                {undef $fvalide_node}
+            {/if}
+            {undef $children}
+        {/if}
+        {undef $fnode_id $ignore_visibility $sourceNode}
     {/foreach}
 
     {if $fvalide_nodes|count|gt(0)}
