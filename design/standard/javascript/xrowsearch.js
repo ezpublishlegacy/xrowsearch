@@ -1,3 +1,21 @@
+jQuery(document).ready(function() {
+    if(jQuery('#header-searchtext').length > 0) {
+        var headelement = jQuery('#header-searchtext'),
+            autocompleteEnabled = headelement.data('autocompleteenabled');
+        if(autocompleteEnabled == true) {
+            var divautocomplete = headelement.data('divautocomplete'),
+                overlayblocker = headelement.data('overlayblocker'),
+                loadDefaultContentCounter = headelement.data('loaddefaultcontentcounter'),
+                height = headelement.data('height');
+            jQuery.autocompleteOnFocus(headelement, divautocomplete, overlayblocker, loadDefaultContentCounter, height);
+            jQuery.autocompleteOnKeyup(headelement, divautocomplete, overlayblocker, loadDefaultContentCounter, height);
+        }
+    }
+    if(jQuery('#Search').length > 0) {
+        jQuery.initAutocomplete(jQuery('#Search'));
+    }
+});
+
 jQuery.extend({
     initOverlayBlocker : function(divID, callbackFunc){
         if(jQuery('#'+divID).length == 0) {
@@ -11,9 +29,7 @@ jQuery.extend({
                 callbackFunc.call(this);
             }
         });
-    }
-});
-jQuery.extend({
+    },
     loadAutocomplete : function(element, divautocomplete, height, callbackFunc){
         var position = element.position();
         var contentparent = jQuery('#'+divautocomplete+'-parent-content'),
@@ -23,5 +39,53 @@ jQuery.extend({
         if(typeof callbackFunc == 'function'){
             callbackFunc.call(this);
         }
+    },
+    autocompleteOnFocus : function(element, divautocomplete, overlayblocker, loadDefaultContentCounter, height){
+        element.focus(function() {
+            jQuery.initOverlayBlocker(overlayblocker, function(){
+                jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
+            });
+            var countChars = element.val().length;
+            if(countChars == loadDefaultContentCounter && jQuery('#'+divautocomplete).height() == 0) {
+                jQuery.loadAutocomplete(element, divautocomplete, height);
+            }
+        });
+    },
+    autocompleteOnKeyup : function(element, divautocomplete, overlayblocker, loadDefaultContentCounter, height){
+        element.keyup(function() {
+            jQuery.initOverlayBlocker(overlayblocker, function(){
+                jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
+            });
+            var countChars = $(this).val().length;
+            if(countChars > loadDefaultContentCounter) {
+                jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
+            }
+            if(countChars > loadDefaultContentCounter) {
+                jQuery.initAutocomplete(element);
+            }
+            else if(countChars == loadDefaultContentCounter && jQuery('#'+divautocomplete).height() == 0) {
+                jQuery.loadAutocomplete(element, divautocomplete, height);
+            }
+        });
+    },
+    initAutocomplete : function(element) {
+        element.autocomplete({
+            source: function(request , response){
+                jQuery.ez('xrowsearch::autocomplete', {'term':request.term}, function(data) {
+                    response(jQuery.map(data.content, function(item) {
+                        return {
+                            label: item,
+                            value: item
+                        }
+                    }));
+                });
+            },
+            minLength: element.data('minlength'),
+            appendTo: element.data('appendto'),
+            select: function(event, ui) {
+                var searchURL = element.data('searchurl');
+                window.location.href = element.data('location')+encodeURIComponent(ui.item.value);
+            }
+        });
     }
 });

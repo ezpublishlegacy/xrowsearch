@@ -49,7 +49,15 @@
         <button id="header-searchbutton" type="submit" class="button-lupe-wifoe" disabled="disabled"><span class="search-lupe"></span></button>
         {else}
         <div id="header-ezautocomplete">
-            <input id="header-searchtext" name="SearchText" type="text" value="" size="12" autocomplete="off" />
+            <input id="header-searchtext" name="SearchText" type="text" value="" size="12" autocomplete="off" data-divautocomplete="header-autocomplete"
+                                                                                                              data-overlayblocker="overlay-blocker"
+                                                                                                              data-loaddefaultcontentcounter="0"
+                                                                                                              data-height="{$height}"
+                                                                                                              data-appendto="#header-autocomplete-rs"
+                                                                                                              data-minlength="{ezini( 'AutoCompleteSettings', 'MinQueryLength', 'ezfind.ini' )}"
+                                                                                                              data-searchurl="{'content/search'|ezurl('no', 'full')}"
+                                                                                                              data-location="{'content/search?SearchText='|ezurl('no', 'full')}"
+                                                                                                              data-autocompleteenabled="{cond($pagedata.is_edit|not(), true, false)}" />
             <button id="header-searchbutton" type="submit" class="button-lupe-wifoe"><span class="search-lupe"></span></button>
             <div id="header-autocomplete"></div>
             <div id="header-autocomplete-rs"></div>
@@ -61,65 +69,3 @@
         </div>
     </form>
 </div>
-
-{if $pagedata.is_edit|not()}
-
-{ezscript_require( array('ezjsc::jquery', 'xrowsearch.js') )}
-<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-<script type="text/javascript">
-{literal}
-var element = jQuery('#header-searchtext'),
-    divautocomplete = 'header-autocomplete',
-    divautocompleteRS = divautocomplete+'-rs',
-    overlayblocker = 'overlay-blocker',
-    minLength = {/literal}{ezini( 'AutoCompleteSettings', 'MinQueryLength', 'ezfind.ini' )}{literal},
-    loadDefaultContentCounter = 0,
-    height = {/literal}{$height}{literal};
-
-jQuery(function() {
-    element.focus(function() {
-        jQuery.initOverlayBlocker(overlayblocker, function(){
-            jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
-        });
-        var countChars = element.val().length;
-        if(countChars == loadDefaultContentCounter && jQuery('#'+divautocomplete).height() == 0)
-            jQuery.loadAutocomplete(element, divautocomplete, height);
-    });
-    element.keyup(function() {
-        jQuery.initOverlayBlocker(overlayblocker, function(){
-            jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
-        });
-        var countChars = $(this).val().length;
-        if(countChars > loadDefaultContentCounter) {
-            jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
-        }
-        if(countChars > loadDefaultContentCounter) {
-            element.autocomplete({
-                source: function(request , response){
-                    jQuery.ez('xrowsearch::autocomplete', {'term':request.term}, 
-                        function(data) {
-                            response(jQuery.map(data.content, function(item) {
-                                return {
-                                    label: item,
-                                    value: item
-                                }
-                            }));
-                        }
-                    );
-                },
-                minLength: minLength,
-                appendTo: '#'+divautocompleteRS,
-                select: function(event, ui) {
-                    var searchURL = '{/literal}{"content/search"|ezurl("no", "full")}{literal}';
-                    window.location.href = searchURL+'?SearchText='+encodeURIComponent(ui.item.value);
-                }
-            });
-        }
-        else if(countChars == loadDefaultContentCounter && jQuery('#'+divautocomplete).height() == 0) {
-            jQuery.loadAutocomplete(element, divautocomplete, height);
-        }
-    });
-});
-{/literal}
-</script>
-{/if}
