@@ -50,7 +50,7 @@ class xrowSOLRHandler extends ezcSearchSolrHandler
      * @param int $port            
      * @param string $location            
      */
-    public function __construct( $host = 'localhost', $port = 8983, $location = '/solr' )
+    public function __construct( $host = 'localhost', $port = 8983, $location = '/solr/hannover.de' )
     {
         $this->host = $host;
         $this->port = $port;
