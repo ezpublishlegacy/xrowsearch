@@ -55,7 +55,6 @@
                                                                                                               data-height="{$height}"
                                                                                                               data-appendto="#header-autocomplete-rs"
                                                                                                               data-minlength="{ezini( 'AutoCompleteSettings', 'MinQueryLength', 'ezfind.ini' )}"
-                                                                                                              data-searchurl="{'content/search'|ezurl('no', 'full')}"
                                                                                                               data-location="{'content/search?SearchText='|ezurl('no', 'full')}"
                                                                                                               data-autocompleteenabled="{cond($pagedata.is_edit|not(), true, false)}" />
             <button id="header-searchbutton" type="submit" class="button-lupe-wifoe"><span class="search-lupe"></span></button>

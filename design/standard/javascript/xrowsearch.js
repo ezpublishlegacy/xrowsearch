@@ -69,23 +69,29 @@ jQuery.extend({
         });
     },
     initAutocomplete : function(element) {
-        element.autocomplete({
-            source: function(request , response){
-                jQuery.ez('xrowsearch::autocomplete', {'term':request.term}, function(data) {
-                    response(jQuery.map(data.content, function(item) {
-                        return {
-                            label: item,
-                            value: item
-                        }
-                    }));
-                });
-            },
-            minLength: element.data('minlength'),
-            appendTo: element.data('appendto'),
-            select: function(event, ui) {
-                var searchURL = element.data('searchurl');
-                window.location.href = element.data('location')+encodeURIComponent(ui.item.value);
-            }
-        });
+        if(element.hasData('appendto')) {
+            var autoAppendto = element.data('appendto'),
+                autoMinLength = 2;
+            if(element.hasData('minlength'))
+                autoMinLength = element.data('minlength');
+            element.autocomplete({
+                source: function(request , response){
+                    jQuery.ez('xrowsearch::autocomplete', {'term':request.term}, function(data) {
+                        response(jQuery.map(data.content, function(item) {
+                            return {
+                                label: item,
+                                value: item
+                            }
+                        }));
+                    });
+                },
+                minLength: autoMinLength,
+                appendTo: autoAppendto,
+                select: function(event, ui) {
+                    if(element.hasData('location'))
+                        window.location.href = element.data('location')+encodeURIComponent(ui.item.value);
+                }
+            });
+        }
     }
 });
