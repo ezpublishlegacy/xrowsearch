@@ -69,10 +69,10 @@ jQuery.extend({
         });
     },
     initAutocomplete : function(element) {
-        if(element.hasData('appendto')) {
+        if(element.data('appendto') != 'undefined') {
             var autoAppendto = element.data('appendto'),
                 autoMinLength = 2;
-            if(element.hasData('minlength'))
+            if(element.data('minlength') != 'undefined')
                 autoMinLength = element.data('minlength');
             element.autocomplete({
                 source: function(request , response){
@@ -88,7 +88,7 @@ jQuery.extend({
                 minLength: autoMinLength,
                 appendTo: autoAppendto,
                 select: function(event, ui) {
-                    if(element.hasData('location'))
+                    if(element.data('location') != 'undefined')
                         window.location.href = element.data('location')+encodeURIComponent(ui.item.value);
                 }
             });
