@@ -8,11 +8,11 @@ jQuery(document).ready(function() {
                 loadDefaultContentCounter = headelement.data('loaddefaultcontentcounter'),
                 height = headelement.data('height');
             jQuery.autocompleteOnFocus(headelement, divautocomplete, overlayblocker, loadDefaultContentCounter, height);
-            jQuery.autocompleteOnKeyup(headelement, divautocomplete, overlayblocker, loadDefaultContentCounter, height);
+            jQuery.autocompleteOnKeyup(headelement, divautocomplete, overlayblocker, loadDefaultContentCounter, height, 'xrowsearch::autocomplete');
         }
     }
     if(jQuery('#Search').length > 0) {
-        jQuery.initAutocomplete(jQuery('#Search'));
+        jQuery.initAutocomplete(jQuery('#Search'), 'xrowsearch::autocomplete');
     }
 });
 
@@ -51,7 +51,7 @@ jQuery.extend({
             }
         });
     },
-    autocompleteOnKeyup : function(element, divautocomplete, overlayblocker, loadDefaultContentCounter, height){
+    autocompleteOnKeyup : function(element, divautocomplete, overlayblocker, loadDefaultContentCounter, height, functionName){
         element.keyup(function() {
             jQuery.initOverlayBlocker(overlayblocker, function(){
                 jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
@@ -61,14 +61,14 @@ jQuery.extend({
                 jQuery('#'+divautocomplete).html('').animate({ height: '0px' }, 600);
             }
             if(countChars > loadDefaultContentCounter) {
-                jQuery.initAutocomplete(element);
+                jQuery.initAutocomplete(element, functionName);
             }
             else if(countChars == loadDefaultContentCounter && jQuery('#'+divautocomplete).height() == 0) {
                 jQuery.loadAutocomplete(element, divautocomplete, height);
             }
         });
     },
-    initAutocomplete : function(element) {
+    initAutocomplete : function(element, functionName) {
         if(typeof element.data('appendto') != 'undefined') {
             var autoAppendto = element.data('appendto'),
                 autoMinLength = 2;
@@ -76,7 +76,7 @@ jQuery.extend({
                 autoMinLength = element.data('minlength');
             element.autocomplete({
                 source: function(request , response){
-                    jQuery.ez('xrowsearch::autocomplete', {'term':request.term}, function(data) {
+                    jQuery.ez(functionName, {'term':request.term}, function(data) {
                         response(jQuery.map(data.content, function(item) {
                             return {
                                 label: item,
