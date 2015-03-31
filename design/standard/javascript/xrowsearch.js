@@ -68,7 +68,7 @@ jQuery.extend({
             }
         });
     },
-    initAutocomplete : function(element, functionName) {
+    initAutocomplete : function(element, functionName, afterSelectActionFunction) {
         if(typeof element.data('appendto') != 'undefined') {
             var autoAppendto = element.data('appendto'),
                 autoMinLength = 2;
@@ -89,7 +89,22 @@ jQuery.extend({
                 appendTo: autoAppendto,
                 select: function(event, ui) {
                     if(typeof element.data('location') != 'undefined')
-                        window.location.href = element.data('location')+encodeURIComponent(ui.item.value);
+                    {
+                        if(afterSelectActionFunction == 'branchenbuch_submit_function')
+                        {
+                            if( $(this).attr('id') =="Search_What")
+                            {
+                                window.location.href = element.data('location')+encodeURIComponent(ui.item.value)+'&Where='+$('#Search_Where').val()+'&SubTreeArray='+$('#hidden_node_id').val();
+                            }else if( $(this).attr('id') =="Search_Where")
+                            {
+                                window.location.href = element.data('location')+encodeURIComponent(ui.item.value)+'&What='+$('#Search_What').val()+'&SubTreeArray='+$('#hidden_node_id').val();
+                            }
+                        }
+                        else
+                        {
+                            window.location.href = element.data('location')+encodeURIComponent(ui.item.value);
+                        }
+                    }
                     else
                         return false;
                 }
