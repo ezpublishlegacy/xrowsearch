@@ -80,36 +80,37 @@ class xrowSearchServerFunctions extends ezjscServerFunctions
     {
         $http = eZHTTPTool::instance();
         $searchResult = array();
+        $searchResult_c=array();
+        $searchResult_e=array();
         if ( $http->hasPostVariable( 'term' ) )
         {
             $searchStr_c = trim( $http->postVariable( 'term' ) );
             $result_c = array();
-            $searchText_c="attr_name_s:".$searchStr_c."^10";
-            $params_item_c= array('query' => "attr_name_t:(".$searchStr_c.")"." OR ".$searchText_c,
+            $searchText_c='attr_name_s:"'.$searchStr_c.'"^10';
+            $params_item_c= array('query' => "ezf_df_text:(".$searchStr_c.")"." OR ".$searchText_c,
                                   'subtree_array' => array(580898,580899),
                                   'class_id' => array('frontpage'),
-                                  'limit' => 20);
+                                  'limit' => 15);
             $result_c = eZFunctionHandler::execute('ezfind', 'search', $params_item_c);
             
-
             $searchStr_e = trim( $http->postVariable( 'term' ) );
             $result_e = array();
-            $searchText_e="attr_name_s:".$searchStr_e."^10";
-            $params_item_e= array('query' => "attr_name_t:(".$searchStr_e.")"." OR ".$searchText_e,
-                                'subtree_array' => array(580898,580899),
-                                'class_id' => array('localbusiness'),
-                                'filter' => array('or',array('attr_package_si:(1 2 3)')),
-                                'limit' => 20);
+            $searchText_e='attr_name_s:"'.$searchStr_e.'"^10';
+            $params_item_e= array('query' => "ezf_df_text:(".$searchStr_e.")"." OR ".$searchText_e,
+                                  'subtree_array' => array(580898,580899),
+                                  'class_id' => array('localbusiness'),
+                                  'filter' => array('or',array('attr_package_si:(1 2 3)')),
+                                  'limit' => 15);
             $result_e = eZFunctionHandler::execute('ezfind', 'search', $params_item_e);
 
-            if(is_array($result_c['SearchResult']) && count($result_c['SearchResult']) > 0)
+            if($result_c['SearchCount'] > 0)
             {
                 foreach($result_c['SearchResult'] as $fieldItem)
                 {
                     $searchResult_c[] = $fieldItem->ContentObject->Name;
                 }
             }
-            if(is_array($result_e['SearchResult']) && count($result_e['SearchResult']) > 0)
+            if($result_e['SearchCount'] > 0)
             {
                 foreach($result_e['SearchResult'] as $fieldItem)
                 {
