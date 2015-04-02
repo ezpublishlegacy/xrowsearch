@@ -107,7 +107,12 @@ class xrowSearchServerFunctions extends ezjscServerFunctions
             {
                 foreach($result_c['SearchResult'] as $fieldItem)
                 {
-                    $searchResult_c[] = $fieldItem->ContentObject->Name;
+                    $pos1=strpos($fieldItem->PathString,'301493');
+                    $pos2=strpos($fieldItem->PathString,'581119');
+                    if($pos1 === false && $pos2 ===false)
+                    {
+                        $searchResult_c[] = $fieldItem->ContentObject->Name;
+                    }
                 }
             }
             if($result_e['SearchCount'] > 0)
