@@ -86,7 +86,7 @@ class xrowSearchServerFunctions extends ezjscServerFunctions
         {
             $searchStr_c = trim( $http->postVariable( 'term' ) );
             $result_c = array();
-            $searchText_c='attr_name_s:"'.$searchStr_c.'"^10';
+            $searchText_c='attr_name_t:('.$searchStr_c.')^10';
             $params_item_c= array('query' => "ezf_df_text:(*".$searchStr_c."*)"." OR ".$searchText_c,
                                   'subtree_array' => array(580898,580899),
                                   'class_id' => array('frontpage'),
@@ -95,7 +95,7 @@ class xrowSearchServerFunctions extends ezjscServerFunctions
             
             $searchStr_e = trim( $http->postVariable( 'term' ) );
             $result_e = array();
-            $searchText_e='attr_name_s:"'.$searchStr_e.'"^10';
+            $searchText_e='attr_name_t:('.$searchStr_e.')^10';
             $params_item_e= array('query' => "ezf_df_text:(*".$searchStr_e."*)"." OR ".$searchText_e,
                                   'subtree_array' => array(580898,580899),
                                   'class_id' => array('localbusiness'),
