@@ -132,7 +132,7 @@ class xrowSearchServerFunctions extends ezjscServerFunctions
         $searchResult = array();
         if ( $http->hasPostVariable( 'term' ) )
         {
-            $searchStr = trim( $http->postVariable( 'term' ) );
+            $searchStr = ucfirst(strtolower(trim( $http->postVariable( 'term' ) )));
             $result = array();
             $findINI = eZINI::instance( 'ezfind.ini' );
             $solrINI = eZINI::instance( 'solr.ini' );
